@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+  "regexp"
   "io/ioutil"
 	"net/http"
 )
@@ -9,14 +10,16 @@ import (
 func hello(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Hello world!")
 }
-func ReadHTML(){
-  contents,_ := ioutil.ReadFile("public/index.html")
-  println(string(contents))
+func ReadHTML() (string){
+  contents, _ := ioutil.ReadFile("public/index.html")
+
+  //println(string(contents))
+  return string(contents)
 }
 var mux map[string]func(http.ResponseWriter, *http.Request)
 
 func main() {
-  ReadHTML()
+
 	server := http.Server{
 		Addr:    ":8000",
 		Handler: &myHandler{},
@@ -35,6 +38,8 @@ func (*myHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h(w, r)
 		return
 	}
+  re := regexp.MustCompile("\\{\\w*\\}")
+  replace := re.ReplaceAllLiteralString(ReadHTML() , r.URL.String())
 
-	io.WriteString(w, "My server: "+r.URL.String())
+	io.WriteString(w, replace)
 }
