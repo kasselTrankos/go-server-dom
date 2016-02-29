@@ -1,45 +1,42 @@
 package main
 
 import (
-	"io"
-  "regexp"
-  "io/ioutil"
+	"log"
+	"fmt"
 	"net/http"
+  "html/template"
 )
 
-func hello(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "Hello world!")
-}
-func ReadHTML() (string){
-  contents, _ := ioutil.ReadFile("public/index.html")
 
-  //println(string(contents))
-  return string(contents)
+type Context struct {
+    Title  string
+    Static string
 }
-var mux map[string]func(http.ResponseWriter, *http.Request)
+const STATIC_URL string = "/public/"
+
 
 func main() {
-
-	server := http.Server{
-		Addr:    ":8000",
-		Handler: &myHandler{},
+	http.HandleFunc("/", Home)
+	http.HandleFunc("/public/", Home)
+	err := http.ListenAndServe(":8000", nil)
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
 	}
-
-	mux = make(map[string]func(http.ResponseWriter, *http.Request))
-	mux["/"] = hello
-
-	server.ListenAndServe()
+}
+func Home(w http.ResponseWriter, req *http.Request) {
+	context := Context{Title: "About"}
+	 render(w, "index", context)
 }
 
-type myHandler struct{}
-
-func (*myHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if h, ok := mux[r.URL.String()]; ok {
-		h(w, r)
-		return
-	}
-  re := regexp.MustCompile("\\{\\w*\\}")
-  replace := re.ReplaceAllLiteralString(ReadHTML() , r.URL.String())
-
-	io.WriteString(w, replace)
+func render(w http.ResponseWriter, tmpl string, context Context) {
+    context.Static = STATIC_URL
+    tmpl_list := []string{fmt.Sprintf("public/%s.html", tmpl)}
+    t, err := template.ParseFiles(tmpl_list...)
+    if err != nil {
+        log.Print("template parsing error: ", err)
+    }
+    err = t.Execute(w, context)
+    if err != nil {
+        log.Print("template executing error: ", err)
+    }
 }
