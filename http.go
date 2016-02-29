@@ -10,6 +10,7 @@ import (
 
 type Context struct {
     Title  string
+		Script template.HTML
     Static string
 }
 const STATIC_URL string = "/public/"
@@ -24,7 +25,8 @@ func main() {
 	}
 }
 func Home(w http.ResponseWriter, req *http.Request) {
-	context := Context{Title: "About"}
+	context := Context{Title: "About", Script: template.HTML(`<script>alert('hola')</script>`)}
+
 	 render(w, "index", context)
 }
 
