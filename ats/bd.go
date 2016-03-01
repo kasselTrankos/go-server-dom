@@ -1,4 +1,4 @@
-package com
+package ats
 
 import(
   "fmt"
@@ -13,9 +13,11 @@ type msg struct {
   Msg   string        `bson:"msg"`
   Count int           `bson:"count"`
 }
-
+func Test(){
+  fmt.Printf("Found document:caller \n")
+}
 func init() {
-  uri := os.Getenv("mongodb://localhost:27017/vera")
+  uri := os.Getenv("mongodb://localhost:27017")
   if uri == "" {
     fmt.Println("no connection string provided")
     os.Exit(1)
