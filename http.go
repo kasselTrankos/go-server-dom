@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
   "html/template"
+	"./com/bd"
 )
 
 
@@ -17,6 +18,7 @@ const STATIC_URL string = "/public/"
 
 
 func main() {
+	bd.init()
 	http.HandleFunc("/", Home)
 	http.HandleFunc("/public/", Home)
 	err := http.ListenAndServe(":8000", nil)
