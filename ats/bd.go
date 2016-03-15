@@ -17,11 +17,11 @@ func Test(){
   fmt.Printf("Found document:caller \n")
 }
 func init() {
-  uri := os.Getenv("mongodb://localhost:27017")
+  uri := "mongodb://localhost:27017"/*os.Getenv("mongodb://localhost:27017")
   if uri == "" {
     fmt.Println("no connection string provided")
     os.Exit(1)
-  }
+  }*/
 
   sess, err := mgo.Dial(uri)
   if err != nil {

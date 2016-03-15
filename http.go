@@ -28,7 +28,7 @@ func main() {
 	}
 }
 func Home(w http.ResponseWriter, req *http.Request) {
-	context := Context{Title: "About", Script: template.HTML(`<script>alert('hola')</script>`)}
+	context := Context{Title: "About", Script: template.HTML(`<script>console.log('hola')</script>`)}
 
 	 render(w, "index", context)
 }
